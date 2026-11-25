@@ -1,0 +1,271 @@
+/*
+  styles.css -- all visual design for VulnScan Lite.
+
+  Organised top to bottom:
+    1. design tokens (CSS variables)
+    2. base / typography
+    3. layout shell (header, hero, footer)
+    4. forms and buttons
+    5. results (gauge, module cards, check rows)
+    6. history and auth
+    7. responsive rules
+*/
+
+/* ---------- 1. design tokens ------------------------------------------- */
+:root {
+  --bg: #0b1220;              /* page background */
+  --bg-soft: #0f172a;         /* panels */
+  --card: #111c31;            /* cards */
+  --card-2: #16233d;          /* nested cards */
+  --border: #22304d;          /* 1px borders */
+  --text: #e6edf7;            /* main text */
+  --muted: #93a4bf;           /* secondary text */
+  --accent: #38bdf8;          /* cyan accent */
+  --accent-2: #818cf8;        /* indigo accent */
+  --green: #34d399;           /* pass */
+  --amber: #fbbf24;           /* warn */
+  --red: #f87171;             /* fail */
+  --blue: #60a5fa;            /* info */
+  --radius: 16px;             /* card corner radius */
+  --shadow: 0 18px 40px rgba(2, 6, 23, 0.45);
+  --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+/* ---------- 2. base / typography --------------------------------------- */
+* { box-sizing: border-box; }              /* padding is included in width */
+
+html, body { margin: 0; padding: 0; }      /* remove browser default gaps */
+
+body {
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(56, 189, 248, 0.14), transparent 60%),
+    radial-gradient(700px 400px at 92% 4%, rgba(129, 140, 248, 0.12), transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+h1, h2, h3, h4 { line-height: 1.2; margin: 0; }
+p { margin: 0; }
+
+code, pre, .mono { font-family: var(--mono); }
+
+/* A reusable "card" look. */
+.card {
+  background: linear-gradient(180deg, var(--card), var(--bg-soft));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* ---------- 3. layout shell -------------------------------------------- */
+.shell { max-width: 1080px; margin: 0 auto; padding: 22px 20px 60px; }
+
+/* Top bar: logo on the left, account controls on the right. */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap;                 /* let the account form drop to a new line */
+  gap: 16px; padding: 6px 2px 18px;
+}
+
+.brand { display: flex; align-items: center; gap: 12px; }
+
+.brand-mark {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, rgba(56,189,248,.25), rgba(129,140,248,.25));
+  border: 1px solid var(--border);
+}
+
+.brand h1 { font-size: 18px; letter-spacing: .2px; }
+.brand span { color: var(--muted); font-size: 12.5px; }
+
+/* The legal/ethical banner. Deliberately impossible to miss. */
+.disclaimer {
+  display: flex; gap: 10px; align-items: flex-start;
+  border: 1px solid rgba(251, 191, 36, .35);
+  background: rgba(251, 191, 36, .08);
+  color: #fde68a;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 26px;
+}
+
+/* Hero section. */
+.hero { padding: 26px 26px 22px; margin-bottom: 22px; }
+.hero h2 { font-size: 30px; letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero p.lead { color: var(--muted); max-width: 640px; margin-bottom: 20px; }
+
+/* Footer line. */
+.footer {
+  margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--border);
+  color: var(--muted); font-size: 12px;
+  display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between;
+}
+
+/* ---------- 4. forms and buttons --------------------------------------- */
+.scan-form { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.input {
+  flex: 1 1 320px;                 /* grow, but wrap on narrow screens */
+  background: #0a1424;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 13px 15px;
+  font-size: 15px;
+  outline: none;
+}
+.input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,.15); }
+.input::placeholder { color: #5b6b86; }
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .06s ease, filter .15s ease;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+
+.btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #06121f; }
+.btn-primary:hover { filter: brightness(1.06); }
+
+.btn-ghost {
+  background: transparent; color: var(--text);
+  border-color: var(--border);
+}
+.btn-ghost:hover { border-color: var(--accent); }
+
+.btn-small { padding: 7px 12px; font-size: 12.5px; border-radius: 9px; }
+
+/* Inline error message. */
+.error {
+  margin-top: 12px; padding: 10px 14px; border-radius: 10px;
+  background: rgba(248, 113, 113, .1);
+  border: 1px solid rgba(248, 113, 113, .35);
+  color: #fecaca; font-size: 13.5px;
+}
+
+/* ---------- 5. results -------------------------------------------------- */
+.result-grid { display: grid; grid-template-columns: 300px 1fr; gap: 18px; align-items: start; }
+
+.score-card { padding: 20px; text-align: center; }
+.score-card svg { max-width: 280px; display: block; margin: 8px auto 0; }   /* keep the gauge readable when stacked */
+.score-card h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); }
+.score-meta { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+
+/* One module = one small card with a score ring. */
+.modules { display: grid; gap: 14px; }
+.module { padding: 16px 18px; }
+.module-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.module-head h3 { font-size: 15px; }
+.module-score { font-size: 22px; font-weight: 700; font-family: var(--mono); }
+.module-sub { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+
+/* Thin progress bar used for module scores. */
+.bar { height: 6px; border-radius: 99px; background: #0a1424; margin-top: 10px; overflow: hidden; }
+.bar > i { display: block; height: 100%; border-radius: 99px; }
+
+/* The list of checks. */
+.checks { padding: 6px 0; margin-top: 16px; }
+.check {
+  border-top: 1px solid var(--border);
+}
+.check:first-child { border-top: none; }
+
+.check summary {
+  list-style: none;                 /* hide the default triangle */
+  display: flex; gap: 12px; align-items: center;
+  padding: 12px 18px; cursor: pointer;
+}
+.check summary::-webkit-details-marker { display: none; }   /* Safari/Chrome */
+.check summary:hover { background: rgba(56, 189, 248, .04); }
+
+.pill {
+  font-size: 11px; font-weight: 700; letter-spacing: .4px;
+  padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+  border: 1px solid currentColor;
+}
+.pill.pass { color: var(--green); background: rgba(52, 211, 153, .1); }
+.pill.warn { color: var(--amber); background: rgba(251, 191, 36, .1); }
+.pill.fail { color: var(--red);   background: rgba(248, 113, 113, .1); }
+.pill.info { color: var(--blue);  background: rgba(96, 165, 250, .1); }
+
+.check-title { flex: 1; font-weight: 600; font-size: 14px; }
+.check-module { color: var(--muted); font-size: 11.5px; }
+
+.check-body { padding: 0 18px 16px 18px; color: var(--muted); font-size: 13.5px; }
+.check-body .evidence {
+  font-family: var(--mono); font-size: 12px; color: #cbd5e1;
+  background: #0a1424; border: 1px solid var(--border);
+  padding: 8px 10px; border-radius: 9px; margin-top: 8px;
+  overflow-wrap: anywhere;
+}
+.fix { margin-top: 10px; }
+.fix b { color: var(--text); }
+.fix pre {
+  background: #0a1424; border: 1px solid var(--border);
+  padding: 10px 12px; border-radius: 9px; overflow-x: auto;
+  font-size: 12px; color: #d7e3f4; margin: 8px 0 0;
+}
+
+/* Progress bar while polling. */
+.progress-card { padding: 18px 20px; }
+.progress-track { height: 10px; background: #0a1424; border-radius: 99px; overflow: hidden; border: 1px solid var(--border); }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .4s ease; }
+.progress-row { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+
+/* ---------- 6. history and auth ---------------------------------------- */
+.auth-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.auth-form .input { flex: 1 1 180px; padding: 10px 12px; font-size: 14px; }
+
+.history-list { display: grid; gap: 8px; margin-top: 12px; }
+.history-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-radius: 12px;
+  background: var(--card-2); border: 1px solid var(--border);
+  font-size: 13px;
+}
+.history-url { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-score { font-family: var(--mono); font-weight: 700; }
+.history-date { color: var(--muted); font-size: 11.5px; }
+
+/* Small trend line drawn with SVG. */
+.spark { margin-top: 10px; }
+
+/* Utility classes. */
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.spread { justify-content: space-between; }
+.muted { color: var(--muted); }
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.hidden { display: none; }
+
+/* ---------- 7. responsive ---------------------------------------------- */
+@media (max-width: 860px) {
+  .result-grid { grid-template-columns: 1fr; }   /* stack gauge above modules */
+  .hero h2 { font-size: 24px; }
+  .shell { padding: 16px 14px 48px; }
+
+  /* Stack the brand above the login form so nothing overlaps. */
+  .topbar { flex-direction: column; align-items: stretch; }
+  .auth-form { width: 100%; }
+  .auth-form .input { flex: 1 1 100%; }
+}
+
+/* Respect users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

@@ -1,0 +1,46 @@
+<!doctype html>
+<!--
+  index.html -- the single page the browser loads.
+
+  There is NO build step. We load three files from web/vendor/ (React,
+  ReactDOM and Babel) and Babel compiles app.jsx in the browser. That means
+  you can edit app.jsx, press F5, and see the change -- perfect for learning.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Make the layout responsive on phones. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VulnScan Lite -- passive web security scanner</title>
+    <meta name="description" content="Instant passive security health report for a website." />
+    <!-- Our own stylesheet. -->
+    <link rel="stylesheet" href="/styles.css" />
+    <!--
+      Inline SVG favicon: no extra file, no 404 in the browser console.
+      The data: URL contains a URL-encoded shield icon in the accent colour.
+    -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2338bdf8' d='M12 2l8 3.5v6c0 5-3.4 9.4-8 10.5C7.4 20.9 4 16.5 4 11.5v-6L12 2z'/%3E%3C/svg%3E" />
+    <!--
+      React 18 in production mode, served from this project (no CDN, so it
+      works offline). These are third-party minified files -- you cannot read
+      them, and you do not need to.
+    -->
+    <script src="/vendor/react.production.min.js"></script>
+    <script src="/vendor/react-dom.production.min.js"></script>
+    <!-- Babel translates JSX (the HTML-like syntax) into JavaScript. -->
+    <script src="/vendor/babel.min.js"></script>
+  </head>
+  <body>
+    <!-- React renders the whole UI into this empty div. -->
+    <div id="root"></div>
+
+    <!-- Shown only when JavaScript is disabled. -->
+    <noscript>VulnScan Lite needs JavaScript enabled to run.</noscript>
+
+    <!--
+      type="text/babel" tells Babel to compile this file before the browser
+      executes it. data-presets="react" enables JSX support.
+    -->
+    <script type="text/babel" data-presets="react" src="/app.jsx"></script>
+  </body>
+</html>

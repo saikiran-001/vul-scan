@@ -1,0 +1,23 @@
+# Render Blueprint for VulnScan Lite.
+# Push this file with the project, then in Render choose:
+#   New + -> Blueprint -> pick the repository.
+# Render reads the settings below automatically.
+services:
+  - type: web
+    name: vulnscan-lite
+    runtime: python
+    plan: free
+    # Repo root == this folder. If you pushed a parent folder instead, add:
+    # rootDir: vulnscan-lite
+    buildCommand: pip install -r requirements.txt
+    # One worker, many threads. start.py uses gunicorn when it is installed and
+    # falls back to Flask's server when it is not, so the deploy never dies with
+    # "gunicorn: command not found".
+    startCommand: python start.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: VULNSCAN_QUEUE
+        value: thread
+      - key: VULNSCAN_RATE_LIMIT
+        value: "30"

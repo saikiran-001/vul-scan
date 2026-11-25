@@ -1,0 +1,21 @@
+# VulnScan Lite -- Python dependencies
+#
+# Install with:  python -m pip install -r requirements.txt
+#
+# Flask      : the web server (pure Python, works everywhere)
+# gunicorn   : production WSGI server used by Render/Linux (not needed on Windows)
+# requests   : the single HTTP request the scanner makes
+# bs4        : parses HTML to find <meta name="generator">
+# reportlab  : builds the PDF report
+# celery     : the task queue (optional -- the app falls back to a thread)
+# redis      : the broker + status store for Celery (optional, same reason)
+# certifi    : the CA bundle used for TLS verification on Windows
+
+Flask>=3.0
+gunicorn>=21.2
+requests>=2.31
+beautifulsoup4>=4.12
+reportlab>=4.0
+celery>=5.3
+redis>=5.0
+certifi>=2024.1.1
